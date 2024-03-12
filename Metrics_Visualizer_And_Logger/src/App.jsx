@@ -4,7 +4,7 @@ import Logs from "./pages/Logs";
 import { useEffect, useState } from "react";
 
 export default function App() {
-  const [duration, setDuration] = useState("5");
+  const [duration, setDuration] = useState("0");
 
   return (
     <BrowserRouter>
