@@ -29,6 +29,7 @@ function Logger({ timeStamps, logs }) {
                 <div className="border-black" />
                 <div className="inset-0 w-full overflow-auto bg-terminalBody opacity-50">
                     {logs.map((log, index) => {
+                        console.log(log.timestamp, Date.now());
                         return (
                             <LogEntry
                                 key={index}

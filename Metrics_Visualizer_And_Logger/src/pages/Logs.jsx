@@ -13,22 +13,19 @@ function Logs({ duration, setDuration }) {
 
     useEffect(() => {
         setLogsList([]);
-        if (duration === "0") {
+        if (duration == "0") {
             MimicLogs.subscribeToLiveLogs((log) => {
                 setLogsList((prevLogs) => [...prevLogs, log]); // Update logsList with the new log at the beginning
             });
         } else {
-            const intervalId = setInterval(() => {
                 MimicLogs.fetchPreviousLogs({
-                    startTs: 0,
+                    startTs: Date.now()-parseInt(duration) * 60 * 1000,
                     endTs: Date.now(),
                     limit: 10,
                 }).then((newLogs) => {
-                    setLogsList((prevLogs) => [...prevLogs, ...newLogs]);
+                    setLogsList((prevLogs) => [...prevLogs, newLogs]);
+                    console.log("E");
                 });
-            }, 5000); // Fetch new logs every 5 seconds
-            console.log(intervalId);
-            return () => clearInterval(intervalId); // Clean up on unmount
         }
     }, [duration]);
 

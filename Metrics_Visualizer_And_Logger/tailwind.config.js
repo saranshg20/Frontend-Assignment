@@ -12,7 +12,7 @@ export default {
         terminalHeadText: "#82A0CE",
         terminalBodyText: "#A8C3E8",
         terminalTimeStampText: "#5E7BAA",
-        terminalSuccessTag: "#2DD4BF",
+        terminalSuccessText: "#2DD4BF",
         terminalErrorText: "#F87171"
       },
     },

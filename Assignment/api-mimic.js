@@ -47,6 +47,7 @@ export class MimicLogs {
    * @returns {Promise<{timestamp: number; message: string}[]>}
    */
   static fetchPreviousLogs({ startTs, endTs, limit }) {
+    console.log(startTs, endTs);
     return new Promise((resolve) => {
       const delay = 250 + Math.random() * 2750;
       const randomPastTs = Math.max(
@@ -111,6 +112,7 @@ const getStepSize = (startTs, endTs) => {
 
   return stepSize;
 };
+
 const normaliseTime = (timestamp, step) => {
   const utcOffsetSeconds = new Date().getTimezoneOffset() * 60;
   return timestamp - ((timestamp - utcOffsetSeconds * 1000) % (step * 1000));
