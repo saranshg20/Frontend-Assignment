@@ -3,14 +3,14 @@ import { adjustDate } from "../utils/utils";
 
 function LogEntry({ type, timeStamp, message }) {
     const colorMap = {
-        "error": "terminalErrorText",
-        "success": "green-200",
+        "error": "red-400",
+        "success": "green-300",
         "info": "terminalBodyText"
     }
 
     return (
         <div className="flex w-full items-center p-0.5">
-            <span className={`border-2 border-${colorMap[type]} h-7 mr-2`}></span>
+            <span className={`border-4 border-${colorMap[type]} h-7 mr-2`}></span>
             <span className="text-terminalTimeStampText m-2 mr-4">{`${adjustDate(
                 timeStamp
             )}`}</span>

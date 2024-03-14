@@ -1,3 +1,5 @@
+import { adjustTime } from "../Metrics_Visualizer_And_Logger/src/utils/utils";
+
 const LOREM_IPSUM_TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed arcu vel nunc dictum bibendum. In sed leo sit amet est efficitur feugiat vitae ac elit. Proin condimentum ultrices mi sit amet tincidunt. Ut id magna vel nulla convallis porttitor. Fusce semper tellus nibh, sit amet gravida ipsum dapibus sit amet. Nam blandit gravida hendrerit. Proin accumsan, tortor vitae ultricies consectetur, ligula risus sollicitudin ex, facilisis iaculis nulla enim ac purus. Duis egestas dignissim augue, ac ultrices lectus egestas eu. Aliquam vel egestas nibh, et posuere lectus. Aliquam in nunc ante. Nam sed neque risus. Nulla quis risus felis. Mauris dictum neque vel tellus eleifend pulvinar. Proin auctor urna efficitur quam posuere ullamcorper. Praesent accumsan imperdiet auctor.
 
 Nulla ultricies sed massa non dapibus. Proin pretium aliquam nibh, non volutpat nunc tristique ac. Mauris velit justo, tempor ut faucibus a, sagittis ac orci. Morbi molestie lorem a libero consectetur, quis sollicitudin ligula lacinia. Cras id magna augue. Quisque ornare aliquet hendrerit. Suspendisse vel interdum magna. Nunc pharetra dui ut gravida sollicitudin. Nam enim sapien, sodales sed venenatis quis, aliquam vel nibh. Suspendisse nec massa quis mi euismod consectetur. Vestibulum tempor erat finibus sem suscipit luctus. Donec convallis mi magna, at viverra augue facilisis ut. Fusce a iaculis lacus. Nulla id eleifend quam, nec dignissim leo. Donec pellentesque nunc non metus elementum feugiat.
@@ -33,152 +35,184 @@ Aliquam et consectetur ante. Vivamus aliquet neque nec congue tincidunt. Etiam m
 Integer quis ipsum eu risus hendrerit porta nec eget nisi. Praesent consectetur commodo sem, a posuere magna euismod nec. Aenean non ornare sapien. Cras in ultricies massa. Etiam tortor ante, maximus vitae rhoncus non, vehicula in erat.`;
 
 const getRandomLog = () => {
-  const randomIndex = Math.floor(Math.random() * LOREM_IPSUM_TEXT.length - 50);
-  const logLength = 50 + Math.floor(Math.random() * 700);
-  return LOREM_IPSUM_TEXT.slice(randomIndex, randomIndex + logLength);
+    const randomIndex = Math.floor(
+        Math.random() * LOREM_IPSUM_TEXT.length - 50
+    );
+    const logLength = 50 + Math.floor(Math.random() * 700);
+    return LOREM_IPSUM_TEXT.slice(randomIndex, randomIndex + logLength);
+};
+
+const getRandomType = () => {
+    const types = [
+        "error",
+        "info",
+        "info",
+        "info",
+        "info",
+        "success",
+        "success",
+        "success",
+    ];
+    const randomType = types[Math.floor(Math.random() * types.length)];
+    return randomType;
 };
 
 export class MimicLogs {
-  /**
-   *
-   * @param {number} startTs
-   * @param {number} endTs
-   * @param {number} limit
-   * @returns {Promise<{timestamp: number; message: string}[]>}
-   */
-  static fetchPreviousLogs({ startTs, endTs, limit }) {
-    console.log(startTs, endTs);
-    return new Promise((resolve) => {
-      const delay = 250 + Math.random() * 2750;
-      const randomPastTs = Math.max(
-        endTs - (600000 + Math.random() * 1000 * 60 * 60 * 6),
-        startTs
-      );
+    /**
+     *
+     * @param {number} startTs
+     * @param {number} endTs
+     * @param {number} limit
+     * @returns {Promise<{timestamp: number; message: string}[]>}
+     */
+    static fetchPreviousLogs({ startTs, endTs, limit }) {
+        return new Promise((resolve) => {
+            const delay = 250 + Math.random() * 2750;
+            const randomPastTs = Math.max(
+                endTs - (600000 + Math.random() * 1000 * 60 * 60 * 6),
+                startTs
+            );
+            console.log("Calling");
+            const gap = Math.floor((endTs - randomPastTs) / limit);
+            const logs = Array.from({ length: limit }).map((_, i) => {
+                return {
+                    timestamp: endTs - (i ? i * gap : 1),
+                    message: getRandomLog(),
+                    type: getRandomType(),
+                };
+            });
+            setTimeout(() => resolve(logs), delay);
+        });
+    }
 
-      const gap = Math.floor((endTs - randomPastTs) / limit);
-      const logs = Array.from({ length: limit }).map((_, i) => ({
-        timestamp: endTs - (i ? i * gap : 1),
-        message: getRandomLog(),
-      }));
-      setTimeout(() => resolve(logs), delay);
-    });
-  }
+    static subscribeToLiveLogs(callback) {
+        let timeout;
+        const generateNextLog = () => {
+            const nextLog = {
+                timestamp: Date.now(),
+                message: getRandomLog(),
+                type: getRandomType(),
+            };
+            callback(nextLog);
+            timeout = setTimeout(generateNextLog, 10 + Math.random() * 1990);
+        };
+        timeout = setTimeout(generateNextLog, 10 + Math.random() * 1990);
 
-  static subscribeToLiveLogs(callback) {
-    let timeout;
-    const generateNextLog = () => {
-      const nextLog = { timestamp: Date.now(), message: getRandomLog() };
-      callback(nextLog);
-      timeout = setTimeout(generateNextLog, 10 + Math.random() * 1990);
-    };
-    timeout = setTimeout(generateNextLog, 10 + Math.random() * 1990);
-
-    return () => clearInterval(timeout);
-  }
+        return () => clearInterval(timeout);
+    }
 }
 
 const timeWindowsList = [
-  60 * 5,
-  60 * 15,
-  60 * 30,
-  60 * 60,
-  60 * 60 * 3,
-  60 * 60 * 6,
-  60 * 60 * 12,
-  60 * 60 * 24,
-  60 * 60 * 24 * 2,
-  60 * 60 * 24 * 7,
-  60 * 60 * 24 * 30,
+    60 * 5,
+    60 * 15,
+    60 * 30,
+    60 * 60,
+    60 * 60 * 3,
+    60 * 60 * 6,
+    60 * 60 * 12,
+    60 * 60 * 24,
+    60 * 60 * 24 * 2,
+    60 * 60 * 24 * 7,
+    60 * 60 * 24 * 30,
 ];
 const timeWindowToStepSizeMap = {
-  [60 * 5]: 1,
-  [60 * 15]: 5,
-  [60 * 30]: 15,
-  [60 * 60]: 30,
-  [60 * 60 * 3]: 60,
-  [60 * 60 * 6]: 300,
-  [60 * 60 * 12]: 600,
-  [60 * 60 * 24]: 900,
-  [60 * 60 * 24 * 2]: 1800,
-  [60 * 60 * 24 * 7]: 3600,
-  [60 * 60 * 24 * 30]: 21600,
+    [60 * 5]: 1,
+    [60 * 15]: 5,
+    [60 * 30]: 15,
+    [60 * 60]: 30,
+    [60 * 60 * 3]: 60,
+    [60 * 60 * 6]: 300,
+    [60 * 60 * 12]: 600,
+    [60 * 60 * 24]: 900,
+    [60 * 60 * 24 * 2]: 1800,
+    [60 * 60 * 24 * 7]: 3600,
+    [60 * 60 * 24 * 30]: 21600,
 };
 const getStepSize = (startTs, endTs) => {
-  const timeDiff = endTs - startTs;
-  const matched =
-    timeWindowsList.find((v) => v * 1000 > timeDiff) ||
-    timeWindowsList[timeWindowsList.length - 1];
-  const stepSize = timeWindowToStepSizeMap[matched];
+    const timeDiff = endTs - startTs;
+    const matched =
+        timeWindowsList.find((v) => v * 1000 > timeDiff) ||
+        timeWindowsList[timeWindowsList.length - 1];
+    const stepSize = timeWindowToStepSizeMap[matched];
 
-  return stepSize;
+    return stepSize;
 };
 
 const normaliseTime = (timestamp, step) => {
-  const utcOffsetSeconds = new Date().getTimezoneOffset() * 60;
-  return timestamp - ((timestamp - utcOffsetSeconds * 1000) % (step * 1000));
+    const utcOffsetSeconds = new Date().getTimezoneOffset() * 60;
+    return timestamp - ((timestamp - utcOffsetSeconds * 1000) % (step * 1000));
 };
 
 const populateDataValues = (startTs, endTs, stepSize, min = 0, max = 100) => {
-  const dataValues = [];
-  for (let i = startTs; i <= endTs; i += stepSize * 1000) {
-    dataValues.push({
-      timestamp: i,
-      value: min + Math.floor(Math.random() * (max - min) * 100) / 100,
-    });
-  }
-  return dataValues;
+    const dataValues = [];
+    for (let i = startTs; i <= endTs; i += stepSize * 1000) {
+        dataValues.push({
+            timestamp: i,
+            value: min + Math.floor(Math.random() * (max - min) * 100) / 100,
+        });
+    }
+    return dataValues;
 };
 
 export class MimicMetrics {
-  static fetchMetrics({ startTs, endTs }) {
-    const stepSize = getStepSize(startTs, endTs);
-    const normalisedStartTs = normaliseTime(startTs, stepSize);
-    const normalisedEndTs = normaliseTime(endTs, stepSize);
+    static fetchMetrics({ startTs, endTs }) {
+        const stepSize = getStepSize(startTs, endTs);
+        const normalisedStartTs = normaliseTime(startTs, stepSize);
+        const normalisedEndTs = normaliseTime(endTs, stepSize);
 
-    const getGraph = (name, linesConfig) => ({
-      name,
-      graphLines: linesConfig.map(([name, min, max]) => ({
-        name,
-        values: populateDataValues(
-          normalisedStartTs,
-          normalisedEndTs,
-          stepSize,
-          min,
-          max
-        ),
-      })),
-    });
-    const getProportionateMinMax = (min, max, newPeak) => [
-      (min * newPeak) / 100,
-      (max * newPeak) / 100,
-    ];
-    return new Promise((resolve) => {
-      const delay = 250 + Math.random() * 2750;
-      setTimeout(
-        () =>
-          resolve([
-            getGraph("CPU Usage", [
-              ["Limits", 80, 100],
-              ["Requested", 40, 85],
-              ["Used", 10, 60],
-            ]),
-            getGraph("Memory Usage", [
-              ["Limits", ...getProportionateMinMax(80, 100, 32768)],
-              ["Requested", ...getProportionateMinMax(40, 85, 32768)],
-              ["Used", ...getProportionateMinMax(10, 60, 32768)],
-            ]),
-            getGraph("Network Usage", [
-              ["Limits", ...getProportionateMinMax(80, 100, 512)],
-              ["Requested", ...getProportionateMinMax(40, 85, 512)],
-              ["Used", ...getProportionateMinMax(10, 60, 512)],
-            ]),
-            getGraph("Disk IOPS", [
-              ["Read", ...getProportionateMinMax(80, 100, 25)],
-              ["Write", ...getProportionateMinMax(10, 60, 25)],
-            ]),
-          ]),
-        delay
-      );
-    });
-  }
+        const getGraph = (name, linesConfig) => ({
+            name,
+            graphLines: linesConfig.map(([name, min, max]) => ({
+                name,
+                values: populateDataValues(
+                    normalisedStartTs,
+                    normalisedEndTs,
+                    stepSize,
+                    min,
+                    max
+                ),
+            })),
+        });
+        const getProportionateMinMax = (min, max, newPeak) => [
+            (min * newPeak) / 100,
+            (max * newPeak) / 100,
+        ];
+        return new Promise((resolve) => {
+            const delay = 250 + Math.random() * 2750;
+            setTimeout(
+                () =>
+                    resolve([
+                        getGraph("CPU Usage", [
+                            ["Limits", 80, 100],
+                            ["Requested", 40, 85],
+                            ["Used", 10, 60],
+                        ]),
+                        getGraph("Memory Usage", [
+                            [
+                                "Limits",
+                                ...getProportionateMinMax(80, 100, 32768),
+                            ],
+                            [
+                                "Requested",
+                                ...getProportionateMinMax(40, 85, 32768),
+                            ],
+                            ["Used", ...getProportionateMinMax(10, 60, 32768)],
+                        ]),
+                        getGraph("Network Usage", [
+                            ["Limits", ...getProportionateMinMax(80, 100, 512)],
+                            [
+                                "Requested",
+                                ...getProportionateMinMax(40, 85, 512),
+                            ],
+                            ["Used", ...getProportionateMinMax(10, 60, 512)],
+                        ]),
+                        getGraph("Disk IOPS", [
+                            ["Read", ...getProportionateMinMax(80, 100, 25)],
+                            ["Write", ...getProportionateMinMax(10, 60, 25)],
+                        ]),
+                    ]),
+                delay
+            );
+        });
+    }
 }

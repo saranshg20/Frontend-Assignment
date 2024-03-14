@@ -1,7 +1,8 @@
 import React from "react";
 import LogEntry from "./LogEntry";
+import { adjustTime } from "../utils/utils";
 
-function Logger({ timeStamps, logs }) {
+function Logger({ timeStamps, logs, duration }) {
     return (
         <div className="w-7/8 p-4 flex-col justify-center relative">
             <div className="flex justify-end">
@@ -23,17 +24,21 @@ function Logger({ timeStamps, logs }) {
                 <div className="flex justify-center p-2">
                     <img src="Sidepane/Spinner.svg" alt="" />
                     <div className="ml-4 text-base text-terminalHeadText">
-                        Loading previous 400 logs
+                        {duration == "0"
+                            ? "Live Logs"
+                            : `Previous ${duration} minutes logs`}
                     </div>
                 </div>
                 <div className="border-black" />
                 <div className="inset-0 w-full overflow-auto bg-terminalBody opacity-50">
                     {logs.map((log, index) => {
-                        console.log(log.timestamp, Date.now());
+                        if (log.timestamp == undefined || log.timestamp == null)
+                            return null;
+                        // console.log(adjustTime(log.timestamp));
                         return (
                             <LogEntry
                                 key={index}
-                                type={"info"}
+                                type={log.type}
                                 timeStamp={log.timestamp}
                                 message={log.message}
                             />

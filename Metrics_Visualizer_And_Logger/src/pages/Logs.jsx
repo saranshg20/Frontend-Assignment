@@ -4,29 +4,37 @@ import { getTimeStamps } from "../utils/utils";
 import Logger from "../stories/Logger";
 import { MimicLogs } from "../../../Assignment/api-mimic";
 
-function Logs({ duration, setDuration }) {
-    const timeStamps = getTimeStamps(duration);
+function Logs({ duration, setDuration, timeStamps }) {
     const [logsList, setLogsList] = useState([]);
-
-    // Memoize the logsList to prevent unnecessary re-renders
-    const memoizedLogsList = useMemo(() => logsList, [logsList]);
+    const [shouldFetchLogs, setShouldFetchLogs] = useState(true);
 
     useEffect(() => {
-        setLogsList([]);
+        let unsubscribe;
+
         if (duration == "0") {
-            MimicLogs.subscribeToLiveLogs((log) => {
-                setLogsList((prevLogs) => [...prevLogs, log]); // Update logsList with the new log at the beginning
+            unsubscribe = MimicLogs.subscribeToLiveLogs((log) => {
+                setLogsList((prevLogs) => [log, ...prevLogs]);
             });
         } else {
-                MimicLogs.fetchPreviousLogs({
-                    startTs: Date.now()-parseInt(duration) * 60 * 1000,
-                    endTs: Date.now(),
-                    limit: 10,
-                }).then((newLogs) => {
-                    setLogsList((prevLogs) => [...prevLogs, newLogs]);
-                    console.log("E");
-                });
+            MimicLogs.fetchPreviousLogs({
+                startTs: Date.now() - (parseInt(duration)) * 60 * 1000,
+                endTs: Date.now(),
+                limit: parseInt(duration) * 12,
+            }).then((newLogs) => {
+                setLogsList([...newLogs].reverse());
+                setShouldFetchLogs(false);
+            });
         }
+
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+    }, [duration, shouldFetchLogs]);
+
+    useEffect(() => {
+        setShouldFetchLogs(true);
     }, [duration]);
 
     return (
@@ -38,8 +46,8 @@ function Logs({ duration, setDuration }) {
             />
             <div className="bg-blue-50 w-full h-full">
                 <hr />
-                {/* Pass memoized logsList to Logger component */}
-                <Logger timeStamps={timeStamps} logs={memoizedLogsList} />
+                {console.log(logsList)}
+                <Logger timeStamps={timeStamps} logs={logsList} duration={duration}/>
             </div>
         </div>
     );
