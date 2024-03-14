@@ -1,8 +1,20 @@
-# React + Vite
+## Setup instructions
+`cd Metrics_Visualizer_And_Logger`
+\
+`npm install && npm install storybook`
+\
+`npm run storybook`
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This will start the Storybook server and you can view it at http://localhost:6006.
 
-Currently, two official plugins are available:
+`npm run dev`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This will start the react application at http://localhost:5173
+
+
+## Dependencies
+- [chart.js](https://www.chartjs.org/)
+- [react](https://reactjs.org/)
+- [react-chartjs-2](https://www.npmjs.com/package/react-chartjs-2)
+- [react-dom](https://reactjs.org/docs/react-dom.html): 
+- [react-router-dom](https://reactrouter.com/web/guides/quick-start)
