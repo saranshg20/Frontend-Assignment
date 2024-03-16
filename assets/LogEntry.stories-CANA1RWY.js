@@ -1,0 +1,5 @@
+import{j as t}from"./jsx-runtime-DQ32znRX.js";import"./index-DH5ua8nC.js";import{L as e}from"./LogEntry-BFsc72T_.js";import"./_commonjsHelpers-Cpj98o6Y.js";import"./utils-DiFv87TX.js";const y={title:"Components/LogEntry",component:e,args:{}},m=r=>t.jsxs("div",{children:[t.jsx(e,{...r,type:"info",timeStamp:Date.now(),message:"Random Information"}),t.jsx(e,{...r,type:"error",timeStamp:Date.now(),message:"Random Information"}),t.jsx(e,{...r,type:"success",timeStamp:Date.now(),message:"Random Information"})]}),o=m.bind({});o.args={};var a,n,s;o.parameters={...o.parameters,docs:{...(a=o.parameters)==null?void 0:a.docs,source:{originalSource:`args => <div>
+        <LogEntry {...args} type={"info"} timeStamp={Date.now()} message={"Random Information"} />
+        <LogEntry {...args} type={"error"} timeStamp={Date.now()} message={"Random Information"} />
+        <LogEntry {...args} type={"success"} timeStamp={Date.now()} message={"Random Information"} />
+    </div>`,...(s=(n=o.parameters)==null?void 0:n.docs)==null?void 0:s.source}}};const f=["Story"];export{o as Story,f as __namedExportsOrder,y as default};
