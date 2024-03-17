@@ -49,7 +49,7 @@ function Subplots({ title, datasets, labels }) {
                 },
             },
             tooltip: {
-                enabled: false,
+                enabled: true,
                 position: "nearest",
             },
         },
