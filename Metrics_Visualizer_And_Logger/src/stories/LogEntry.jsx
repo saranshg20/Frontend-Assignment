@@ -5,7 +5,7 @@ function LogEntry({ type, timeStamp, message }) {
     return (
         <div className="flex w-full items-center p-0.5">
             <span
-                className={`border-4 h-7 mr-2 ${
+                className={`border-2 h-8 mr-2 ${
                     type === "error"
                         ? "border-red-400"
                         : type === "success"
@@ -25,7 +25,9 @@ function LogEntry({ type, timeStamp, message }) {
                         : "text-terminalBodyText"
                 }`}
             >{`[${type}]`}</span>
-            <span className={`text-terminalBodyText w-4/5 m-2 mr-4`}>{`${message}`}</span>
+            <span
+                className={`text-terminalBodyText w-4/5 m-2 mr-4`}
+            >{`${message}`}</span>
         </div>
     );
 }

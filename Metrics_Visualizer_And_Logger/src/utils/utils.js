@@ -92,7 +92,7 @@ export function getTimeStamps(duration) {
 function createTimeStampLabels(start, end) {
     let list = [];
     const stepSize = getStepSize(start, end);
-    for (let i = start; i <= end; i += stepSize*1000) {
+    for (let i = start; i <= end; i += stepSize * 1000) {
         list.push(adjustTime(i));
     }
     return list;
